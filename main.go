@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/hashicorp/terraform/plugin"
-	"github.com/terraform-providers/terraform-provider-freenas/freenas"
+	"github.com/fishman/terraform-provider-freenas/freenas"
 )
 
 func main() {
