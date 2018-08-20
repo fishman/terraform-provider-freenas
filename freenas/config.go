@@ -1,63 +1,40 @@
 package freenas
 
-import ()
+import (
+	"fmt"
 
-type APIs struct {
+	freenas "github.com/fishman/go-freenas"
+	"github.com/hashicorp/terraform/helper/schema"
+)
+
+type FreenasClient struct {
+	client *freenas.Client
 }
 
 type Config struct {
-	Host     string
-	User     string
-	Password string
+	Debug         bool
+	User          string
+	Password      string
+	FreenasServer string
+	InsecureFlag  bool
 }
 
+func NewConfig(d *schema.ResourceData) (*Config, error) {
+	// Handle backcompat support for vcenter_server; once that is removed,
+	// vsphere_server can just become a Required field that is referenced inline
+	// in Config below.
+	server := d.Get("freenas_server").(string)
 
-func (c *Config) APIs() (*APIs, error) {
-	context := &client.Context{
-		Host: c.Host,
+	if server == "" {
+		return nil, fmt.Errorf("freenas_server must be provided")
 	}
 
-	// authApi, err := auth.New(context)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error creating auth API: %s", err)
-	// }
+	c := &Config{
+		User:          d.Get("user").(string),
+		Password:      d.Get("password").(string),
+		InsecureFlag:  d.Get("allow_unverified_ssl").(bool),
+		FreenasServer: server,
+	}
 
-	// tenantApi, err := tenant.New(context)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error creating tenant API: %s", err)
-	// }
-
-	// workenvApi, err := workenv.New(context)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error creating working environment API: %s", err)
-	// }
-
-	// vsaWorkenvApi, err := vsa.New(context)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error creating VSA working environment API: %s", err)
-	// }
-
-	// awsHaWorkenvApi, err := awsha.New(context)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error creating AWS HA working environment API: %s", err)
-	// }
-
-	// auditApi, err := audit.New(context)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("Error creating audit API: %s", err)
-	// }
-
-	// apis := &APIs{
-	// 	AuthAPI:                    authApi,
-	// 	TenantAPI:                  tenantApi,
-	// 	WorkingEnvironmentAPI:      workenvApi,
-	// 	VSAWorkingEnvironmentAPI:   vsaWorkenvApi,
-	// 	AWSHAWorkingEnvironmentAPI: awsHaWorkenvApi,
-	// 	AuditAPI:                   auditApi,
-	// }
-  //
-  apis := &APIs{}
-
-	log.Printf("[INFO] FreeNAS Client configured for user: %s", c.User)
-	return apis, nil
+	return c, nil
 }

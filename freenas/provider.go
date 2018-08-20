@@ -1,11 +1,10 @@
 package freenas
 
 import (
-  "fmt"
-  "log"
+	"log"
 
-  "github.com/hashicorp/terraform/helper/schema"
-  "github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 func Provider() terraform.ResourceProvider {
@@ -22,36 +21,29 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("FREENAS_PASSWORD", nil),
 				Sensitive:   true,
 			},
-			"host": {
+			"server": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("FREENAS_HOST", nil),
+				DefaultFunc: schema.EnvDefaultFunc("FREENAS_SERVER", nil),
 			},
+		},
+
+		ResourcesMap: map[string]*schema.Resource{
+			"freenas_nfs_share": resourceFreenasNfsShare(),
 		},
 
 		ConfigureFunc: providerConfigure,
 	}
 }
 
-
 func providerConfigure(data *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Host:     data.Get("host").(string),
-		User:     data.Get("user").(string),
-		Password: data.Get("password").(string),
-	}
-
-	apis, err := config.APIs()
-	if err != nil {
-		return nil, fmt.Errorf("Error creating APIs: %s", err)
+		FreenasServer: data.Get("server").(string),
+		User:          data.Get("user").(string),
+		Password:      data.Get("password").(string),
 	}
 
 	log.Println("[INFO] Initializing FreeNAS client")
 
-	err = apis.AuthAPI.Login(config.User, config.Password)
-	if err != nil {
-		return nil, fmt.Errorf("Error logging in user %s: %s", config.User, err)
-	}
-
-	return apis, nil
+	return nil, nil
 }
