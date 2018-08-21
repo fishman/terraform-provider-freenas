@@ -1,22 +1,70 @@
-# Terraform FreeNAS Provider
+Terraform Provider
+==================
 
-This is the repository for the Terraform FreeNAS Provider.
+- Website: https://www.terraform.io
+- [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
+- Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
 
-For general information about Terraform, visit the [official
-website][tf-website] and the [GitHub project page][tf-github].
+<img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
 
-[tf-website]: https://terraform.io/
-[tf-github]: https://github.com/hashicorp/terraform
+Requirements
+------------
 
-This provider plugin is maintained by Reza Jelveh.
+-	[Terraform](https://www.terraform.io/downloads.html) 0.11.x
+-	[Go](https://golang.org/doc/install) 1.10 (to build the provider plugin)
+-   [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports):
+    ```
+    go get golang.org/x/tools/cmd/goimports
+    ```
 
-# Using the Provider
+Building The Provider
+---------------------
 
-The current version of this provider requires Terraform v0.10.2 or higher to
-run.
+Clone repository to: `$GOPATH/src/github.com/fishman/terraform-provider-freenas`
 
-Note that you need to run `terraform init` to fetch the provider before
-deploying. Read about the provider split and other changes to TF v0.10.0 in the
-official release announcement found [here][tf-0.10-announce].
+```sh
+$ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
+$ git clone git@github.com:fishman/terraform-provider-freenas
+```
 
-[tf-0.10-announce]: https://www.hashicorp.com/blog/hashicorp-terraform-0-10/
+Enter the provider directory and build the provider
+
+```sh
+$ cd $GOPATH/src/github.com/freenas/terraform-provider-freenas
+$ make build
+```
+
+Using the provider
+----------------------
+## Fill in for each provider
+
+Developing the Provider
+---------------------------
+
+If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.10+ is *required*). You'll also need to correctly setup a [GOPATH](http://golang.org/doc/code.html#GOPATH), as well as adding `$GOPATH/bin` to your `$PATH`.
+
+To compile the provider, run `make build`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
+
+```sh
+$ make build
+...
+$ $GOPATH/bin/terraform-provider-freenas
+...
+```
+
+Running `make dev` or `make devlinux` or `devwin` will only build the specified developing provider which matchs the local system.
+And then, it will unarchive the provider binary and then replace the local provider plugin.
+
+In order to test the provider, you can simply run `make test`.
+
+```sh
+$ make test
+```
+
+In order to run the full suite of Acceptance tests, run `make testacc`.
+
+*Note:* Acceptance tests create real resources, and often cost money to run.
+
+```sh
+$ make testacc
+```
