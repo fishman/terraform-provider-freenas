@@ -31,7 +31,8 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"freenas_nfs_share": resourceFreenasNfsShare(),
+			"freenas_storage_dataset": resourceFreenasStorageDataset(),
+			"freenas_nfs_share":       resourceFreenasNfsShare(),
 		},
 	}
 
