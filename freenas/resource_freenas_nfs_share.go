@@ -16,7 +16,7 @@ func resourceFreenasNfsShare() *schema.Resource {
 		Update: resourceFreenasNfsShareUpdate,
 		Delete: resourceFreenasNfsShareDelete,
 		Importer: &schema.ResourceImporter{
-			State: resourceFreenasNfsShareImport,
+			State: schema.ImportStatePassthrough,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -111,10 +111,6 @@ func resourceFreenasNfsShareDelete(d *schema.ResourceData, meta interface{}) err
 
 	_, err = client.NfsShares.Delete(context.TODO(), id)
 	return err
-}
-
-func resourceFreenasNfsShareImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
-	return nil, nil
 }
 
 func getFreenasNfsShare(d *schema.ResourceData, freenas *freenas.Client) (*freenas.NfsShare, error) {
