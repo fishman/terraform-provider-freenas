@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	freenas "github.com/fishman/go-freenas"
+	"github.com/fishman/go-freenas/freenas"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
 type FreenasClient struct {
-	client *freenas.Client
+	client      *freenas.Client
+	StopContext context.Context
 }
 
 type Config struct {
@@ -17,25 +18,21 @@ type Config struct {
 	User          string
 	Password      string
 	FreenasServer string
-	InsecureFlag  bool
+	Insecure      bool
 }
 
-func (c *Config) Client() (*FreenasClient, error) {
-	client := new(FreenasClient)
-	client.client = freenas.NewClient(
-		&freenas.Config{
-			Address:  c.FreenasServer,
-			User:     c.User,
-			Password: c.Password,
-		},
-	)
+func (c *Config) Client() (interface{}, error) {
+	var client FreenasClient
+	ctx := context.Background()
 
-	_, _, err := client.client.Users.List(context.Background())
+	client.client = freenas.NewClient(c.FreenasServer, c.User, c.Password)
+
+	_, _, err := client.client.Users.List(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("Error logging in user %s: %s", c.User, err)
 	}
 
-	return client, nil
+	return &client, nil
 
 }
 
@@ -49,7 +46,7 @@ func NewConfig(d *schema.ResourceData) (*Config, error) {
 	c := &Config{
 		User:          d.Get("user").(string),
 		Password:      d.Get("password").(string),
-		InsecureFlag:  d.Get("allow_unverified_ssl").(bool),
+		Insecure:      d.Get("allow_unverified_ssl").(bool),
 		FreenasServer: server,
 	}
 

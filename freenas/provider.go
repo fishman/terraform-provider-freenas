@@ -8,7 +8,9 @@ import (
 )
 
 func Provider() terraform.ResourceProvider {
-	return &schema.Provider{
+	var p *schema.Provider
+	// The actual provider
+	p = &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"user": {
 				Type:        schema.TypeString,
@@ -31,24 +33,29 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"freenas_nfs_share": resourceFreenasNfsShare(),
 		},
-
-		ConfigureFunc: providerConfigure,
 	}
+
+	p.ConfigureFunc = providerConfigure(p)
+
+	return p
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	config := Config{
-		FreenasServer: d.Get("server").(string),
-		User:          d.Get("user").(string),
-		Password:      d.Get("password").(string),
-	}
+func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
+	return func(d *schema.ResourceData) (interface{}, error) {
+		config := Config{
+			FreenasServer: d.Get("server").(string),
+			User:          d.Get("user").(string),
+			Password:      d.Get("password").(string),
+		}
 
-	log.Println("[DEBUG] Initializing FreeNAS client")
-	client, err := config.Client()
-	log.Printf("[DEBUG] %v\n", client)
-	if err != nil {
-		return nil, err
-	}
+		log.Println("[DEBUG] Initializing FreeNAS client")
+		meta, err := config.Client()
+		if err != nil {
+			return nil, err
+		}
 
-	return nil, nil
+		meta.(*FreenasClient).StopContext = p.StopContext()
+
+		return meta, nil
+	}
 }
