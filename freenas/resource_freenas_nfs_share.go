@@ -13,18 +13,18 @@ func resourceFreenasNfsShare() *schema.Resource {
 		},
 
 		SchemaVersion: 1,
-		MigrateState:  resourceFreenasNfsShareMigrateState,
+		// MigrateState:  resourceFreenasNfsShareMigrateState,
 		Schema: map[string]*schema.Schema{
-			"Comment": &schema.Schema{
+			"comment": &schema.Schema{
 				Type:        schema.TypeString,
 				Description: "A Comment describing the purpose of the share.",
-				Required:    true,
+				Optional:    true,
 			},
-			"Paths": &schema.Schema{
+			"paths": &schema.Schema{
 				Type:        schema.TypeList,
-				Computed:    true,
 				Description: "The paths this share is linking.",
 				Elem:        &schema.Schema{Type: schema.TypeString},
+				Optional:    true,
 			},
 		},
 	}

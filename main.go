@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform/plugin"
 	"github.com/fishman/terraform-provider-freenas/freenas"
+	"github.com/hashicorp/terraform/plugin"
 )
 
 func main() {

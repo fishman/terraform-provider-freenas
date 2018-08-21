@@ -36,14 +36,19 @@ func Provider() terraform.ResourceProvider {
 	}
 }
 
-func providerConfigure(data *schema.ResourceData) (interface{}, error) {
+func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		FreenasServer: data.Get("server").(string),
-		User:          data.Get("user").(string),
-		Password:      data.Get("password").(string),
+		FreenasServer: d.Get("server").(string),
+		User:          d.Get("user").(string),
+		Password:      d.Get("password").(string),
 	}
 
-	log.Println("[INFO] Initializing FreeNAS client")
+	log.Println("[DEBUG] Initializing FreeNAS client")
+	client, err := config.Client()
+	log.Printf("[DEBUG] %v\n", client)
+	if err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }

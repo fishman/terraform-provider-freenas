@@ -1,6 +1,7 @@
 package freenas
 
 import (
+	"context"
 	"fmt"
 
 	freenas "github.com/fishman/go-freenas"
@@ -19,10 +20,26 @@ type Config struct {
 	InsecureFlag  bool
 }
 
+func (c *Config) Client() (*FreenasClient, error) {
+	client := new(FreenasClient)
+	client.client = freenas.NewClient(
+		&freenas.Config{
+			Address:  c.FreenasServer,
+			User:     c.User,
+			Password: c.Password,
+		},
+	)
+
+	_, _, err := client.client.Users.List(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("Error logging in user %s: %s", c.User, err)
+	}
+
+	return client, nil
+
+}
+
 func NewConfig(d *schema.ResourceData) (*Config, error) {
-	// Handle backcompat support for vcenter_server; once that is removed,
-	// vsphere_server can just become a Required field that is referenced inline
-	// in Config below.
 	server := d.Get("freenas_server").(string)
 
 	if server == "" {
