@@ -11,7 +11,7 @@ description: |-
 Provides a NFS share resource.
 
 This resource allows you to add/remove NFS shares to your FreeNAS. When applied,
-a new NFS share will be created. When destroyed, that team will be removed.
+a new NFS share will be created. When destroyed, that share will be removed.
 
 ## Example Usage
 
@@ -34,11 +34,11 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `id` - The ID of the created team.
+* `id` - The ID of the created share.
 
 ## Import
 
-GitHub Teams can be imported using the FreeNAS NFS share Id e.g.
+NFS shares can be imported using the FreeNAS NFS share Id e.g.
 
 ```
 $ terraform import freenas_nfs_share.core 10
