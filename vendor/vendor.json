@@ -237,6 +237,12 @@
 			"revisionTime": "2018-05-16T10:03:07Z"
 		},
 		{
+			"checksumSHA1": "c0CqOAlq64fMQOjZUyAbQNjldHs=",
+			"path": "github.com/fishman/go-freenas/freenas",
+			"revision": "521ba9059782296eae7fa8afe66090bc5580b98a",
+			"revisionTime": "2018-08-21T18:17:31Z"
+		},
+		{
 			"checksumSHA1": "TmAGzklYHunmTchDYQWhFFFYEao=",
 			"path": "github.com/go-ini/ini",
 			"revision": "5cf292cae48347c2490ac1a58fe36735fb78df7e",
